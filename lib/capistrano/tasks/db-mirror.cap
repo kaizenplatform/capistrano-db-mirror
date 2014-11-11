@@ -1,0 +1,44 @@
+namespace :db do
+  desc 'Download database dump from remote and create mirror in local database - set SKIP_SANITIZE=1 for raw production data (not recommended).'
+  task :mirror do
+    on roles(:db), primary: true do
+      now = Time.now.strftime "%Y%m%d-%H%M%S"
+      filename = "#{now}-#{rails_env}.dump.gz"
+
+      # remote - create dump file
+      remote_f = File.join('/tmp', filename)
+
+      # local - scp dump file from remote
+      local_d = './dump'
+      FileUtils.mkdir_p(local_d)
+      local_f = File.join('./dump', filename)
+
+      within current_path do
+        rake "db:mirror:dump[#{remote_f}]"
+        download! remote_f, local_f, via: :scp
+        execute :rm, remote_f
+      end
+
+      run_locally do
+        local_backup_f = File.join(local_d, "#{now}-local.dump.gz")
+        # local - create current database dump for backup
+        p "creating local db backup as #{local_backup_f} ..."
+        execute "bundle exec rake db:mirror:dump[#{local_backup_f}]"
+        # local - load remote dump into database
+        p "loading remote dump #{local_f} into database..."
+        execute "bundle exec rake db:mirror:load[#{local_f}]"
+
+        unless ENV['SKIP_SANITIZE'] == '1' 
+          p "sanitizing database..."
+          execute "bundle exec rake db:mirror:sanitize"
+        else
+          p "skipping db sanitization..."
+        end 
+
+        # local - remove dumps
+        p "removing backups except the latest local backup..."
+        execute "ls -1 -d #{local_d}/*.dump.gz | grep -v #{local_backup_f} | xargs rm"
+      end
+    end 
+  end
+end 

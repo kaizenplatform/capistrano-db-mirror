@@ -1,0 +1,19 @@
+language: ruby
+
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1
+
+env:
+  global:
+    - CODECLIMATE_REPO_TOKEN=b815025e22a9280228206c24a7f8edb076bac1f7889bc1f394669dc908d6b298
+  matrix:
+    -   
+    - CAP_VERSION=3.0
+
+script: "bundle exec rake spec"
+
+branches:
+  only:
+    - master
