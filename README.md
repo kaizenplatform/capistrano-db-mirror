@@ -34,6 +34,12 @@ $ cap [env] db:mirror
 
 Here, env is the enviornment you deploy and it can be ommited for default env.
 
+If you want to rollback the DB,
+
+```bash
+$ rake db:mirror:rollback
+```
+
 ## Requirement
 
 - Capistrano 3
