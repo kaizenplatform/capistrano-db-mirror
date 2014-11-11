@@ -23,7 +23,7 @@ And run `bundle install`.
 Require `capistrano/db-mirror` in your `Capfile`.
 
 ```ruby
-require `capistrano/db-mirror`
+require "capistrano/db-mirror"
 ```
 
 Then execute the cap task.
@@ -33,6 +33,11 @@ $ cap [env] db:mirror
 ```
 
 Here, env is the enviornment you deploy and it can be ommited for default env.
+
+## Requirement
+
+- Capistrano 3
+- mysqldump
 
 ## Contributing
 
