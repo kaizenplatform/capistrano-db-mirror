@@ -43,6 +43,13 @@ namespace :db do
       end 
     end
 
+    desc "Rollback db"
+    task rollback: [:environment] do
+      files = Dir.glob(File.join(Capistrano::DbMirror.dump_dir, '**', '*.dump.gz'))
+      file = files.sort.reverse.first
+      Rake::Task["db:mirror:load"].invoke(file)
+    end
+
     desc "Sanitize db"
     task sanitize: [:environment] do
       raise "The operation is not allowed in #{Rails.env}!!" if Capistrano::DbMirror.excludes.map(&:to_s).include?(Rails.env.to_s)

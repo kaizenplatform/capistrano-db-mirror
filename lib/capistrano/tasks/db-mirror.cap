@@ -9,7 +9,7 @@ namespace :db do
       remote_f = File.join('/tmp', filename)
 
       # local - scp dump file from remote
-      local_d = './dump'
+      local_d = Capistrano::DbMirror.dump_dir
       FileUtils.mkdir_p(local_d)
       local_f = File.join('./dump', filename)
 

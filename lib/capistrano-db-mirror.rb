@@ -3,7 +3,7 @@ module Capistrano
     VERSION = ::File.read(::File.expand_path('../../VERSION', __FILE__)).to_s.strip
 
     class << self
-      attr_accessor :excludes, :sanitizer
+      attr_accessor :excludes, :sanitizer, :dump_dir
 
       def excludes
         @excludes ||= [:production]
@@ -15,6 +15,10 @@ module Capistrano
             email: "CONCAT('user-', id, '@sanitized-email.com')"
           }
         }
+      end
+
+      def dump_dir
+        @dump_dir ||= './dump'
       end
     end
   end
